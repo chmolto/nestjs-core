@@ -1,0 +1,30 @@
+{
+  "name": "@chmolto/nestjs-core",
+  "version": "1.0.0",
+  "description": "A reusable core library for NestJS projects with a base service and repository pattern.",
+  "main": "dist/index.js",
+  "types": "dist/index.d.ts",
+  "files": [
+    "dist"
+  ],
+  "scripts": {
+    "build": "rimraf dist && tsc",
+    "prepublishOnly": "npm run build"
+  },
+  "keywords": [
+    "nestjs",
+    "repository",
+    "service",
+    "pattern",
+    "core"
+  ],
+  "author": "Your Name <your.email@example.com>",
+  "license": "ISC",
+  "peerDependencies": {
+    "@nestjs/common": "^11.1.3",
+    "rimraf": "^6.0.1"
+  },
+  "devDependencies": {
+    "typescript": "^4.9.5"
+  }
+}
