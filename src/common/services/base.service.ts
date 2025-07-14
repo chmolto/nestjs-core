@@ -48,6 +48,7 @@ export class BaseService<T, CreateDTO, UpdateDTO, Transaction> {
 
   /**
    * Retrieves multiple entities based on the given filters.
+   * @param populate Whether to populate referenced fields in the returned entities.
    * @returns A promise that resolves to an array of entities.
    */
   async findMany(
