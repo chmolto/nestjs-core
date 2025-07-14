@@ -1,4 +1,7 @@
-import { IBaseRepository } from "../interfaces/base-repository.interface";
+import {
+  IBaseRepository,
+  OperationOptions,
+} from "../interfaces/base-repository.interface";
 import { SearchRequest } from "../interfaces/search-request.interface";
 
 /**
@@ -9,109 +12,115 @@ import { SearchRequest } from "../interfaces/search-request.interface";
  * @template T The entity type.
  * @template CreateDTO The DTO used for creating the entity.
  * @template UpdateDTO The DTO used for updating the entity.
+ * @template Transaction The transaction type.
  */
-export class BaseService<T, CreateDTO, UpdateDTO> {
+export class BaseService<T, CreateDTO, UpdateDTO, Transaction> {
   /**
    * Injects the repository dependency, which must conform to the IBaseRepository interface.
-   * @param repository An instance of a repository that implements IBaseRepository.
    */
   constructor(
-    protected readonly repository: IBaseRepository<T, CreateDTO, UpdateDTO>
+    protected readonly repository: IBaseRepository<
+      T,
+      CreateDTO,
+      UpdateDTO,
+      Transaction
+    >
   ) {}
 
   /**
    * Creates a new entity.
-   * @param createDto The data transfer object for creating the entity.
-   * @param populate Whether to populate referenced fields in the returned entity.
    * @returns A promise that resolves to the newly created entity.
    */
-  async create(createDto: CreateDTO, populate?: boolean): Promise<T> {
-    return this.repository.create(createDto, populate);
+  async create(
+    createDto: CreateDTO,
+    options?: OperationOptions<Transaction>
+  ): Promise<T> {
+    return this.repository.create(createDto, options);
   }
 
   /**
-   * Retrieves all entities matching the given filters.
-   * @param filters An object containing key-value pairs to filter the results.
-   * @param populate Whether to populate referenced fields in the returned entities.
+   * Retrieves all entities.
    * @returns A promise that resolves to an array of entities.
    */
-  async findAll(
-    filters?: Record<string, any>,
-    populate?: boolean
+  async findAll(options?: OperationOptions<Transaction>): Promise<T[]> {
+    return this.repository.findAll(options);
+  }
+
+  /**
+   * Retrieves multiple entities based on the given filters.
+   * @returns A promise that resolves to an array of entities.
+   */
+  async findMany(
+    filters: Record<string, any>,
+    options?: OperationOptions<Transaction>
   ): Promise<T[]> {
-    return this.repository.findAll(filters, populate);
+    return this.repository.findMany(filters, options);
   }
 
   /**
    * Finds a single entity by its unique identifier (ID).
-   * @param id The unique identifier of the entity.
-   * @param populate Whether to populate referenced fields in the returned entity.
-   * @param raiseException If true, throws an exception if the entity is not found.
    * @returns A promise that resolves to the entity or null if not found (and raiseException is false).
    */
   async findOne(
     id: string | number,
-    populate?: boolean,
-    raiseException?: boolean
+    options?: OperationOptions<Transaction>
   ): Promise<T | null> {
-    return this.repository.findOne(id, populate, raiseException);
+    return this.repository.findById(id, options);
   }
 
   /**
    * Finds a single entity based on a set of filter conditions.
-   * @param filters An object containing key-value pairs to filter the results.
-   * @param populate Whether to populate referenced fields in the returned entity.
-   * @param raiseException If true, throws an exception if the entity is not found.
    * @returns A promise that resolves to the entity or null if not found (and raiseException is false).
    */
   async findOneBy(
     filters: Record<string, any>,
-    populate?: boolean,
-    raiseException?: boolean
+    options?: OperationOptions<Transaction>
   ): Promise<T | null> {
-    return this.repository.findOneBy(filters, populate, raiseException);
+    return this.repository.findOne(filters, options);
   }
 
   /**
    * Updates an entity by its unique identifier.
-   * @param id The unique identifier of the entity to update.
-   * @param updateDto The data transfer object with the fields to update.
-   * @param populate Whether to populate referenced fields in the returned updated entity.
    * @returns A promise that resolves to the updated entity.
    */
   async update(
     id: string | number,
     updateDto: UpdateDTO,
-    populate?: boolean
+    options?: OperationOptions<Transaction>
   ): Promise<T> {
-    return this.repository.update(id, updateDto, populate);
+    return this.repository.updateById(id, updateDto, options);
   }
 
   /**
    * Deletes an entity by its unique identifier.
-   * This typically performs a soft delete if the repository is configured to do so.
-   * @param id The unique identifier of the entity to delete.
    * @returns A promise that resolves to a confirmation message.
    */
-  async delete(id: string | number): Promise<{ message: string }> {
-    return this.repository.delete(id);
+  async delete(
+    id: string | number,
+    options?: OperationOptions<Transaction>
+  ): Promise<{ message: string }> {
+    return this.repository.deleteById(id, options);
   }
 
   /**
    * Deletes multiple entities based on an array of unique identifiers.
-   * @param ids An array of unique identifiers for the entities to delete.
    * @returns A promise that resolves to a confirmation message.
    */
-  async deleteMany(ids: (string | number)[]): Promise<{ message: string }> {
-    return this.repository.deleteMany(ids);
+  async deleteMany(
+    ids: (string | number)[],
+    options?: OperationOptions<Transaction>
+  ): Promise<{ message: string }> {
+    return this.repository.deleteMany(ids, options);
   }
 
   /**
    * Finds and paginates entities based on search and filter criteria.
-   * @param searchRequest An object containing pagination, sorting, search, and filter parameters.
    * @returns A promise that resolves to a paginated result object.
    */
-  async findByPagination(searchRequest: SearchRequest): Promise<{
+  async findByPagination(
+    searchRequest: SearchRequest,
+    options?: OperationOptions<Transaction>
+  ): Promise<{
     data: T[];
     page: number;
     limit: number;
