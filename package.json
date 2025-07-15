@@ -1,6 +1,6 @@
 {
   "name": "@chmolto/nestjs-core",
-  "version": "1.0.4",
+  "version": "1.0.5",
   "description": "A reusable core library for NestJS projects with a base service and repository pattern.",
   "main": "dist/index.js",
   "types": "dist/index.d.ts",
